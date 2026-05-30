@@ -10,640 +10,102 @@
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body {
-    background: #050a14;
-    color: #dceefb;
-    font-family: 'EB Garamond', Georgia, serif;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
-  #bg-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
-  #frost-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.55;
-    mix-blend-mode: screen;
-  }
-  #particle-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 2;
-    pointer-events: none;
-  }
+  body { background: #050a14; color: #dceefb; font-family: 'EB Garamond', Georgia, serif; overflow-x: hidden; min-height: 100vh; }
+  #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  #frost-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.55; mix-blend-mode: screen; }
+  #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
   .content { position: relative; z-index: 10; }
-
-  .hero {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-  }
-  .hero h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(3rem, 10vw, 8rem);
-    font-weight: 900;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    background: linear-gradient(135deg, #a8e6ff 0%, #e0c3ff 35%, #a8ffd4 65%, #c2e9ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 40px rgba(168,230,255,0.3);
-    animation: shimmer 6s ease-in-out infinite;
-  }
-  .hero .subtitle {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.9rem, 2vw, 1.3rem);
-    letter-spacing: 0.4em;
-    color: #a8c8e8;
-    margin-top: 1rem;
-    opacity: 0.85;
-  }
-  .hero .scroll-hint {
-    position: absolute;
-    bottom: 2rem;
-    font-size: 0.85rem;
-    letter-spacing: 0.25em;
-    color: #7aa8c8;
-    animation: float 3s ease-in-out infinite;
-  }
-  @keyframes shimmer {
-    0%, 100% { filter: brightness(1) hue-rotate(0deg); }
-    50% { filter: brightness(1.15) hue-rotate(15deg); }
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); opacity: 0.6; }
-    50% { transform: translateY(-10px); opacity: 1; }
-  }
-
-  .narrative-section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 1.5rem;
-    position: relative;
-  }
-  .narrative-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(5,10,20,0.45);
-    backdrop-filter: blur(2px);
-    z-index: -1;
-  }
-  .narrative-card {
-    max-width: 800px;
-    padding: 3.5rem 3rem;
-    background: rgba(10,20,35,0.55);
-    border: 1px solid rgba(168,230,255,0.12);
-    border-radius: 4px;
-    backdrop-filter: blur(12px);
-    position: relative;
-    overflow: hidden;
-  }
-  .narrative-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, #a8e6ff, transparent);
-    opacity: 0.5;
-  }
-  .narrative-card h2 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(1.8rem, 5vw, 3rem);
-    font-weight: 700;
-    color: #c8e8ff;
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .narrative-card h2 span {
-    display: block;
-    font-size: 0.5em;
-    font-weight: 400;
-    color: #7aa8c8;
-    letter-spacing: 0.3em;
-    margin-top: 0.5rem;
-  }
-  .narrative-card p {
-    font-size: 1.15rem;
-    line-height: 1.9;
-    color: #b8d4ec;
-    margin-bottom: 1.2rem;
-  }
+  .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; }
+  .hero h1 { font-family: 'Cinzel', serif; font-size: clamp(3rem, 10vw, 8rem); font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; background: linear-gradient(135deg, #a8e6ff 0%, #e0c3ff 35%, #a8ffd4 65%, #c2e9ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 6s ease-in-out infinite; }
+  .hero .subtitle { font-family: 'Cinzel', serif; font-size: clamp(0.9rem, 2vw, 1.3rem); letter-spacing: 0.4em; color: #a8c8e8; margin-top: 1rem; opacity: 0.85; }
+  .hero .scroll-hint { position: absolute; bottom: 2rem; font-size: 0.85rem; letter-spacing: 0.25em; color: #7aa8c8; animation: float 3s ease-in-out infinite; }
+  @keyframes shimmer { 0%, 100% { filter: brightness(1) hue-rotate(0deg); } 50% { filter: brightness(1.15) hue-rotate(15deg); } }
+  @keyframes float { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(-10px); opacity: 1; } }
+  .narrative-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 4rem 1.5rem; position: relative; }
+  .narrative-section::before { content: ''; position: absolute; inset: 0; background: rgba(5,10,20,0.45); backdrop-filter: blur(2px); z-index: -1; }
+  .narrative-card { max-width: 800px; padding: 3.5rem 3rem; background: rgba(10,20,35,0.55); border: 1px solid rgba(168,230,255,0.12); border-radius: 4px; backdrop-filter: blur(12px); position: relative; overflow: hidden; }
+  .narrative-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #a8e6ff, transparent); opacity: 0.5; }
+  .narrative-card h2 { font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 700; color: #c8e8ff; margin-bottom: 1.5rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .narrative-card h2 span { display: block; font-size: 0.5em; font-weight: 400; color: #7aa8c8; letter-spacing: 0.3em; margin-top: 0.5rem; }
+  .narrative-card p { font-size: 1.15rem; line-height: 1.9; color: #b8d4ec; margin-bottom: 1.2rem; }
   .narrative-card p:last-child { margin-bottom: 0; }
-  .tattoo-accent {
-    display: inline-block;
-    width: 60px;
-    height: 1px;
-    background: linear-gradient(90deg, #a8e6ff, transparent);
-    vertical-align: middle;
-    margin: 0 0.5rem;
-  }
-
-  .interactive-hint {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 20;
-    font-size: 0.75rem;
-    color: #6a9ab8;
-    letter-spacing: 0.15em;
-    background: rgba(5,10,20,0.7);
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(168,230,255,0.1);
-    border-radius: 3px;
-    pointer-events: none;
-  }
-
-  @media (max-width: 600px) {
-    .narrative-card { padding: 2rem 1.5rem; }
-  }
+  .tattoo-accent { display: inline-block; width: 60px; height: 1px; background: linear-gradient(90deg, #a8e6ff, transparent); vertical-align: middle; margin: 0 0.5rem; }
+  .interactive-hint { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 20; font-size: 0.75rem; color: #6a9ab8; letter-spacing: 0.15em; background: rgba(5,10,20,0.7); padding: 0.5rem 1rem; border: 1px solid rgba(168,230,255,0.1); border-radius: 3px; pointer-events: none; }
+  @media (max-width: 600px) { .narrative-card { padding: 2rem 1.5rem; } }
 </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 <svg id="frost-overlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-  <defs>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <linearGradient id="frost-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#a8e6ff;stop-opacity:0.7" />
-      <stop offset="50%" style="stop-color:#e0c3ff;stop-opacity:0.4" />
-      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.8" />
-    </linearGradient>
-  </defs>
+  <defs><filter id="glow"><feGaussianBlur stdDeviation="2.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="frost-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a8e6ff;stop-opacity:0.7"/><stop offset="50%" style="stop-color:#e0c3ff;stop-opacity:0.4"/><stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.8"/></linearGradient></defs>
 </svg>
 <canvas id="particle-canvas"></canvas>
-
 <div class="content">
   <section class="hero">
     <h1>Arctic Frost</h1>
     <p class="subtitle">Tattoo Shaman &middot; Ice &middot; Bone</p>
     <div class="scroll-hint">SCROLL TO DESCEND</div>
   </section>
-
   <section class="narrative-section" id="deep-freeze">
     <div class="narrative-card">
       <h2>The Deep Freeze <span>I. Permafrost Memory</span></h2>
       <p>In the long dark of the polar winter, shamans are carved from glacier ice and the tattooed skin of ancestors. Their bodies bear frost-crack patterns like <span class="tattoo-accent"></span>kintsugi of the north, pale blue lines tracing where the cold has broken and reformed them.</p>
-      <p>Through fractures in the ice, the aurora bleeds in ribbons of violet and teal. Each tattoo is a map of frozen rivers, each scar a passage to the world beneath the snow. They wear heavy fur that freezes to stillness, crystalline structures growing from their shoulders like wings of refracted light.</p>
+      <p>Through fractures in the ice, the aurora bleeds in ribbons of violet and teal. Each tattoo is a map of frozen rivers, each scar a passage to the world beneath the snow.</p>
     </div>
   </section>
-
   <section class="narrative-section" id="frost-repair">
     <div class="narrative-card">
       <h2>The Frost Repair <span>II. Kintsugi of Ice</span></h2>
       <p>When the ice shaman fractures, she does not shatter. She is mended with silver-white frost, the cracks filled with aurora-light and powdered bone. The repair is more beautiful than the original form <span class="tattoo-accent"></span>a philosophy written in temperature and time.</p>
-      <p>Her tattoos shift beneath the surface: lichen blooms in indigo spirals, Arctic poppies open in frost-moss beds, and the patterns tell stories of migrations across frozen seas. To touch her is to feel the cold that preserves and the warmth that remembers.</p>
+      <p>Her tattoos shift beneath the surface: lichen blooms in indigo spirals, Arctic poppies open in frost-moss beds, and the patterns tell stories of migrations across frozen seas.</p>
     </div>
   </section>
-
   <section class="narrative-section" id="arctic-bloom">
     <div class="narrative-card">
       <h2>The Arctic Bloom <span>III. Brief Brightness</span></h2>
       <p>Even here, life persists in impossible forms. The shaman tends polar botanicals that flower only in the whiteout <span class="tattoo-accent"></span>lichen like lace, poppies like small suns, moss that glows with stored aurora.</p>
-      <p>In the snow-blind expanse, faint tattoo patterns emerge from nothing: spirals of ice, bone-carved runes, the geometry of frost crystals. They are the language of a people who learned that beauty and survival are the same thing, written in cold light on frozen skin.</p>
+      <p>In the snow-blind expanse, faint tattoo patterns emerge from nothing: spirals of ice, bone-carved runes, the geometry of frost crystals written in cold light on frozen skin.</p>
     </div>
   </section>
 </div>
-
 <div class="interactive-hint">MOVE MOUSE TO FROST &middot; CLICK TO CHIME</div>
-
 <script type="module">
 import gsap from 'https://cdn.skypack.dev/gsap';
 import { ScrollTrigger } from 'https://cdn.skypack.dev/gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
-
-/* === AUDIO: ICE CHIMES === */
-let audioCtx = null;
-function ensureAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-}
-function playChime() {
-  ensureAudio();
-  const t = audioCtx.currentTime;
-  const notes = [880, 1108, 1320, 1661, 1975];
-  const note = notes[Math.floor(Math.random() * notes.length)];
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(note, t);
-  osc.frequency.exponentialRampToValueAtTime(note * 1.5, t + 0.3);
-  gain.gain.setValueAtTime(0, t);
-  gain.gain.linearRampToValueAtTime(0.12, t + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.001, t + 2.5);
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start(t);
-  osc.stop(t + 2.5);
-
-  // Harmonic shimmer
-  const osc2 = audioCtx.createOscillator();
-  const gain2 = audioCtx.createGain();
-  osc2.type = 'triangle';
-  osc2.frequency.setValueAtTime(note * 2.01, t);
-  gain2.gain.setValueAtTime(0, t);
-  gain2.gain.linearRampToValueAtTime(0.04, t + 0.05);
-  gain2.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
-  osc2.connect(gain2);
-  gain2.connect(audioCtx.destination);
-  osc2.start(t);
-  osc2.stop(t + 1.8);
-}
-
-/* === BACKGROUND CANVAS: ICE CRYSTAL LATTICE + AURORA + SNOW === */
-const bgCanvas = document.getElementById('bg-canvas');
-const bgCtx = bgCanvas.getContext('2d');
-let W, H;
-function resizeBg() {
-  W = bgCanvas.width = window.innerWidth;
-  H = bgCanvas.height = window.innerHeight;
-}
-resizeBg();
-window.addEventListener('resize', resizeBg);
-
-// Aurora bands
-const auroras = [];
-for (let i = 0; i < 4; i++) {
-  auroras.push({
-    y: Math.random() * H * 0.6,
-    amplitude: 40 + Math.random() * 60,
-    speed: 0.0003 + Math.random() * 0.0004,
-    phase: Math.random() * Math.PI * 2,
-    hueBase: [160, 260, 140, 200][i],
-    width: 80 + Math.random() * 120
-  });
-}
-
-// Snow
-const snowflakes = [];
-for (let i = 0; i < 180; i++) {
-  snowflakes.push({
-    x: Math.random() * W,
-    y: Math.random() * H,
-    r: 0.5 + Math.random() * 2,
-    vy: 0.3 + Math.random() * 1.2,
-    vx: (Math.random() - 0.5) * 0.4,
-    opacity: 0.3 + Math.random() * 0.7
-  });
-}
-
-// Crystal lattice points
-const latticePoints = [];
-const cols = 12, rows = 8;
-for (let c = 0; c <= cols; c++) {
-  for (let r = 0; r <= rows; r++) {
-    latticePoints.push({
-      x: (c / cols) * W + (Math.random() - 0.5) * 30,
-      y: (r / rows) * H + (Math.random() - 0.5) * 30,
-      ox: (c / cols) * W,
-      oy: (r / rows) * H,
-      phase: Math.random() * Math.PI * 2
-    });
-  }
-}
-
-function drawLattice(time) {
-  bgCtx.save();
-  bgCtx.strokeStyle = 'rgba(168,230,255,0.04)';
-  bgCtx.lineWidth = 0.5;
-  for (let i = 0; i < latticePoints.length; i++) {
-    const p = latticePoints[i];
-    p.x = p.ox + Math.sin(time * 0.0005 + p.phase) * 8;
-    p.y = p.oy + Math.cos(time * 0.0004 + p.phase) * 6;
-    for (let j = i + 1; j < latticePoints.length; j++) {
-      const q = latticePoints[j];
-      const dx = p.x - q.x;
-      const dy = p.y - q.y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 180) {
-        bgCtx.globalAlpha = 0.06 * (1 - dist / 180);
-        bgCtx.beginPath();
-        bgCtx.moveTo(p.x, p.y);
-        bgCtx.lineTo(q.x, q.y);
-        bgCtx.stroke();
-      }
-    }
-  }
-  bgCtx.restore();
-}
-
-function drawAurora(time) {
-  auroras.forEach((a, idx) => {
-    const grad = bgCtx.createLinearGradient(0, a.y - a.width, 0, a.y + a.width);
-    const hueShift = Math.sin(time * a.speed + a.phase) * 20;
-    grad.addColorStop(0, `hsla(${a.hueBase + hueShift}, 60%, 15%, 0)`);
-    grad.addColorStop(0.3, `hsla(${a.hueBase + hueShift}, 55%, 25%, 0.15)`);
-    grad.addColorStop(0.5, `hsla(${a.hueBase + hueShift}, 50%, 35%, 0.25)`);
-    grad.addColorStop(0.7, `hsla(${a.hueBase + hueShift}, 55%, 25%, 0.15)`);
-    grad.addColorStop(1, `hsla(${a.hueBase + hueShift}, 60%, 15%, 0)`);
-
-    bgCtx.fillStyle = grad;
-    bgCtx.beginPath();
-    for (let x = 0; x <= W; x += 4) {
-      const y = a.y + Math.sin(x * 0.003 + time * a.speed + a.phase) * a.amplitude
-                  + Math.sin(x * 0.007 + time * a.speed * 1.5) * (a.amplitude * 0.4);
-      if (x === 0) bgCtx.moveTo(x, y);
-      else bgCtx.lineTo(x, y);
-    }
-    bgCtx.lineTo(W, H);
-    bgCtx.lineTo(0, H);
-    bgCtx.closePath();
-    bgCtx.fill();
-  });
-}
-
-function drawSnow() {
-  bgCtx.fillStyle = '#ffffff';
-  snowflakes.forEach(s => {
-    s.y += s.vy;
-    s.x += s.vx + Math.sin(s.y * 0.01) * 0.2;
-    if (s.y > H) { s.y = -5; s.x = Math.random() * W; }
-    if (s.x > W) s.x = 0;
-    if (s.x < 0) s.x = W;
-    bgCtx.globalAlpha = s.opacity * 0.6;
-    bgCtx.beginPath();
-    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    bgCtx.fill();
-  });
-  bgCtx.globalAlpha = 1;
-}
-
-function animateBg(time) {
-  bgCtx.fillStyle = '#050a14';
-  bgCtx.fillRect(0, 0, W, H);
-
-  // Deep radial gradient center glow
-  const centerGlow = bgCtx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.4, W*0.7);
-  centerGlow.addColorStop(0, 'rgba(15,35,60,0.4)');
-  centerGlow.addColorStop(1, 'rgba(5,10,20,0)');
-  bgCtx.fillStyle = centerGlow;
-  bgCtx.fillRect(0, 0, W, H);
-
-  drawLattice(time);
-  drawAurora(time);
-  drawSnow();
-  requestAnimationFrame(animateBg);
-}
+let audioCtx=null;
+function ensureAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}
+function playChime(){ensureAudio();const t=audioCtx.currentTime;const notes=[880,1108,1320,1661,1975];const note=notes[Math.floor(Math.random()*notes.length)];const osc=audioCtx.createOscillator();const gain=audioCtx.createGain();osc.type='sine';osc.frequency.setValueAtTime(note,t);osc.frequency.exponentialRampToValueAtTime(note*1.5,t+0.3);gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(0.12,t+0.02);gain.gain.exponentialRampToValueAtTime(0.001,t+2.5);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t);osc.stop(t+2.5);}
+const bgCanvas=document.getElementById('bg-canvas');const bgCtx=bgCanvas.getContext('2d');let W,H;
+function resizeBg(){W=bgCanvas.width=window.innerWidth;H=bgCanvas.height=window.innerHeight;}
+resizeBg();window.addEventListener('resize',resizeBg);
+const auroras=[];
+for(let i=0;i<4;i++)auroras.push({y:Math.random()*H*0.6,amplitude:40+Math.random()*60,speed:0.0003+Math.random()*0.0004,phase:Math.random()*Math.PI*2,hueBase:[160,260,140,200][i],width:80+Math.random()*120});
+const snowflakes=[];
+for(let i=0;i<180;i++)snowflakes.push({x:Math.random()*W,y:Math.random()*H,r:0.5+Math.random()*2,vy:0.3+Math.random()*1.2,vx:(Math.random()-0.5)*0.4,opacity:0.3+Math.random()*0.7});
+function drawAurora(time){auroras.forEach(a=>{const grad=bgCtx.createLinearGradient(0,a.y-a.width,0,a.y+a.width);const hs=Math.sin(time*a.speed+a.phase)*20;grad.addColorStop(0,`hsla(${a.hueBase+hs},60%,15%,0)`);grad.addColorStop(0.5,`hsla(${a.hueBase+hs},50%,35%,0.25)`);grad.addColorStop(1,`hsla(${a.hueBase+hs},60%,15%,0)`);bgCtx.fillStyle=grad;bgCtx.beginPath();for(let x=0;x<=W;x+=4){const y=a.y+Math.sin(x*0.003+time*a.speed+a.phase)*a.amplitude;if(x===0)bgCtx.moveTo(x,y);else bgCtx.lineTo(x,y);}bgCtx.lineTo(W,H);bgCtx.lineTo(0,H);bgCtx.closePath();bgCtx.fill();});}
+function drawSnow(){bgCtx.fillStyle='#ffffff';snowflakes.forEach(s=>{s.y+=s.vy;s.x+=s.vx;if(s.y>H){s.y=-5;s.x=Math.random()*W;}bgCtx.globalAlpha=s.opacity*0.6;bgCtx.beginPath();bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);bgCtx.fill();});bgCtx.globalAlpha=1;}
+function animateBg(time){bgCtx.fillStyle='#050a14';bgCtx.fillRect(0,0,W,H);drawAurora(time);drawSnow();requestAnimationFrame(animateBg);}
 requestAnimationFrame(animateBg);
-
-/* === SVG FROST CRACK KINTSUGI OVERLAY === */
-const frostSvg = document.getElementById('frost-overlay');
-function drawFrostCracks() {
-  frostSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  frostSvg.innerHTML = `
-    <defs>
-      <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <linearGradient id="frost-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#a8e6ff;stop-opacity:0.7"/>
-        <stop offset="50%" style="stop-color:#e0c3ff;stop-opacity:0.4"/>
-        <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.8"/>
-      </linearGradient>
-    </defs>
-  `;
-  const crackCount = 18;
-  for (let i = 0; i < crackCount; i++) {
-    let x = Math.random() * W;
-    let y = Math.random() * H;
-    let points = `${x},${y}`;
-    let segments = 4 + Math.floor(Math.random() * 6);
-    for (let s = 0; s < segments; s++) {
-      x += (Math.random() - 0.5) * 300;
-      y += (Math.random() - 0.5) * 300;
-      points += ` ${x},${y}`;
-    }
-    const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    polyline.setAttribute('points', points);
-    polyline.setAttribute('fill', 'none');
-    polyline.setAttribute('stroke', 'url(#frost-grad)');
-    polyline.setAttribute('stroke-width', 0.5 + Math.random() * 1.5);
-    polyline.setAttribute('stroke-linecap', 'round');
-    polyline.setAttribute('stroke-linejoin', 'round');
-    polyline.setAttribute('filter', 'url(#glow)');
-    polyline.setAttribute('opacity', 0.2 + Math.random() * 0.4);
-    frostSvg.appendChild(polyline);
-
-    // Small branch cracks
-    if (Math.random() > 0.5) {
-      const bx = x + (Math.random() - 0.5) * 60;
-      const by = y + (Math.random() - 0.5) * 60;
-      const bPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-      bPoly.setAttribute('points', `${x},${y} ${bx},${by}`);
-      bPoly.setAttribute('fill', 'none');
-      bPoly.setAttribute('stroke', '#a8e6ff');
-      bPoly.setAttribute('stroke-width', 0.3 + Math.random() * 0.5);
-      bPoly.setAttribute('opacity', 0.15 + Math.random() * 0.25);
-      frostSvg.appendChild(bPoly);
-    }
-  }
-}
-drawFrostCracks();
-window.addEventListener('resize', drawFrostCracks);
-
-/* === PARTICLE CANVAS: FLOATING ICE CRYSTALS === */
-const pCanvas = document.getElementById('particle-canvas');
-const pCtx = pCanvas.getContext('2d');
-let pW, pH;
-function resizeP() {
-  pW = pCanvas.width = window.innerWidth;
-  pH = pCanvas.height = window.innerHeight;
-}
-resizeP();
-window.addEventListener('resize', resizeP);
-
-const particles = [];
-const particleCount = 60;
-for (let i = 0; i < particleCount; i++) {
-  particles.push({
-    x: Math.random() * pW,
-    y: Math.random() * pH,
-    size: 2 + Math.random() * 5,
-    vx: (Math.random() - 0.5) * 0.3,
-    vy: -0.2 - Math.random() * 0.5,
-    rotation: Math.random() * Math.PI * 2,
-    rotSpeed: (Math.random() - 0.5) * 0.02,
-    hue: [180, 200, 260, 280][Math.floor(Math.random() * 4)],
-    alpha: 0.2 + Math.random() * 0.5,
-    type: Math.random() > 0.5 ? 'crystal' : 'snow'
-  });
-}
-
-function drawCrystal(ctx, x, y, size, rotation, hue, alpha) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rotation);
-  ctx.fillStyle = `hsla(${hue}, 60%, 75%, ${alpha})`;
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const angle = (i / 6) * Math.PI * 2;
-    const px = Math.cos(angle) * size;
-    const py = Math.sin(angle) * size;
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.fill();
-  // Inner facets
-  ctx.strokeStyle = `hsla(${hue}, 50%, 90%, ${alpha * 0.6})`;
-  ctx.lineWidth = 0.5;
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  for (let i = 0; i < 6; i++) {
-    const angle = (i / 6) * Math.PI * 2;
-    ctx.lineTo(Math.cos(angle) * size * 0.6, Math.sin(angle) * size * 0.6);
-    ctx.moveTo(0, 0);
-  }
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawParticleSnow(ctx, x, y, size, alpha) {
-  ctx.fillStyle = `rgba(220,240,255,${alpha})`;
-  ctx.beginPath();
-  ctx.arc(x, y, size, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function animateParticles() {
-  pCtx.clearRect(0, 0, pW, pH);
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.rotation += p.rotSpeed;
-    if (p.y < -20) { p.y = pH + 20; p.x = Math.random() * pW; }
-    if (p.x < -20) p.x = pW + 20;
-    if (p.x > pW + 20) p.x = -20;
-    if (p.type === 'crystal') drawCrystal(pCtx, p.x, p.y, p.size, p.rotation, p.hue, p.alpha);
-    else drawParticleSnow(pCtx, p.x, p.y, p.size, p.alpha);
-  });
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-
-/* === INTERACTIVE: MOUSE FROST + CLICK CRYSTALS === */
-const mouseFrost = [];
-let mouseX = -100, mouseY = -100;
-
-window.addEventListener('mousemove', e => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  if (Math.random() > 0.7) {
-    mouseFrost.push({
-      x: mouseX + (Math.random() - 0.5) * 30,
-      y: mouseY + (Math.random() - 0.5) * 30,
-      size: 2 + Math.random() * 6,
-      life: 1,
-      decay: 0.01 + Math.random() * 0.02,
-      hue: 180 + Math.random() * 40
-    });
-  }
-});
-
-window.addEventListener('click', e => {
-  playChime();
-  // Spawn crystal burst
-  for (let i = 0; i < 8; i++) {
-    const angle = (i / 8) * Math.PI * 2;
-    const dist = 15 + Math.random() * 25;
-    mouseFrost.push({
-      x: e.clientX + Math.cos(angle) * dist,
-      y: e.clientY + Math.sin(angle) * dist,
-      size: 4 + Math.random() * 8,
-      life: 1,
-      decay: 0.008 + Math.random() * 0.012,
-      hue: [180, 200, 260, 140][Math.floor(Math.random() * 4)]
-    });
-  }
-});
-
-function animateMouseFrost() {
-  for (let i = mouseFrost.length - 1; i >= 0; i--) {
-    const f = mouseFrost[i];
-    f.life -= f.decay;
-    if (f.life <= 0) { mouseFrost.splice(i, 1); continue; }
-    pCtx.save();
-    pCtx.globalAlpha = f.life * 0.6;
-    pCtx.strokeStyle = `hsla(${f.hue}, 60%, 80%, ${f.life})`;
-    pCtx.lineWidth = 1;
-    pCtx.beginPath();
-    const branches = 3 + Math.floor(Math.random() * 3);
-    for (let b = 0; b < branches; b++) {
-      const ang = (b / branches) * Math.PI * 2 + f.life * 2;
-      pCtx.moveTo(f.x, f.y);
-      pCtx.lineTo(f.x + Math.cos(ang) * f.size, f.y + Math.sin(ang) * f.size);
-    }
-    pCtx.stroke();
-    pCtx.restore();
-  }
-  requestAnimationFrame(animateMouseFrost);
-}
-animateMouseFrost();
-
-/* === GSAP SCROLLTRIGGER ANIMATIONS === */
-const sections = document.querySelectorAll('.narrative-section');
-sections.forEach((sec, i) => {
-  const card = sec.querySelector('.narrative-card');
-  gsap.from(card, {
-    scrollTrigger: {
-      trigger: sec,
-      start: 'top 80%',
-      end: 'top 30%',
-      scrub: 1
-    },
-    y: 80,
-    opacity: 0,
-    scale: 0.96,
-    duration: 1,
-    ease: 'power2.out'
-  });
-
-  const title = card.querySelector('h2');
-  gsap.from(title, {
-    scrollTrigger: {
-      trigger: sec,
-      start: 'top 75%',
-      toggleActions: 'play none none reverse'
-    },
-    y: 30,
-    opacity: 0,
-    duration: 1.2,
-    delay: 0.1,
-    ease: 'power3.out'
-  });
-});
-
-gsap.from('.hero h1', {
-  y: 50,
-  opacity: 0,
-  duration: 2,
-  ease: 'power3.out',
-  delay: 0.3
-});
-gsap.from('.hero .subtitle', {
-  y: 20,
-  opacity: 0,
-  duration: 1.5,
-  ease: 'power2.out',
-  delay: 0.8
-});
+const frostSvg=document.getElementById('frost-overlay');
+function drawFrostCracks(){frostSvg.setAttribute('viewBox',`0 0 ${W} ${H}`);frostSvg.innerHTML=`<defs><filter id="glow"><feGaussianBlur stdDeviation="2.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="frost-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a8e6ff;stop-opacity:0.7"/><stop offset="50%" style="stop-color:#e0c3ff;stop-opacity:0.4"/><stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.8"/></linearGradient></defs>`;for(let i=0;i<18;i++){let x=Math.random()*W,y=Math.random()*H,pts=`${x},${y}`;for(let s=0;s<4+Math.floor(Math.random()*6);s++){x+=(Math.random()-0.5)*300;y+=(Math.random()-0.5)*300;pts+=` ${x},${y}`;}const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');pl.setAttribute('points',pts);pl.setAttribute('fill','none');pl.setAttribute('stroke','url(#frost-grad)');pl.setAttribute('stroke-width',0.5+Math.random()*1.5);pl.setAttribute('stroke-linecap','round');pl.setAttribute('filter','url(#glow)');pl.setAttribute('opacity',0.2+Math.random()*0.4);frostSvg.appendChild(pl);}}
+drawFrostCracks();window.addEventListener('resize',drawFrostCracks);
+const pCanvas=document.getElementById('particle-canvas');const pCtx=pCanvas.getContext('2d');let pW,pH;
+function resizeP(){pW=pCanvas.width=window.innerWidth;pH=pCanvas.height=window.innerHeight;}
+resizeP();window.addEventListener('resize',resizeP);
+const particles=[];
+for(let i=0;i<60;i++)particles.push({x:Math.random()*pW,y:Math.random()*pH,size:2+Math.random()*5,vx:(Math.random()-0.5)*0.3,vy:-0.2-Math.random()*0.5,rotation:Math.random()*Math.PI*2,rotSpeed:(Math.random()-0.5)*0.02,hue:[180,200,260,280][Math.floor(Math.random()*4)],alpha:0.2+Math.random()*0.5,type:Math.random()>0.5?'crystal':'snow'});
+const mouseFrost=[];let mouseX=-100,mouseY=-100;
+window.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;if(Math.random()>0.7)mouseFrost.push({x:mouseX+(Math.random()-0.5)*30,y:mouseY+(Math.random()-0.5)*30,size:2+Math.random()*6,life:1,decay:0.01+Math.random()*0.02,hue:180+Math.random()*40});});
+window.addEventListener('click',e=>{playChime();for(let i=0;i<8;i++){const angle=(i/8)*Math.PI*2,dist=15+Math.random()*25;mouseFrost.push({x:e.clientX+Math.cos(angle)*dist,y:e.clientY+Math.sin(angle)*dist,size:4+Math.random()*8,life:1,decay:0.008+Math.random()*0.012,hue:[180,200,260,140][Math.floor(Math.random()*4)]});}});
+function animateAll(){pCtx.clearRect(0,0,pW,pH);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.rotation+=p.rotSpeed;if(p.y<-20){p.y=pH+20;p.x=Math.random()*pW;}if(p.type==='crystal'){pCtx.save();pCtx.translate(p.x,p.y);pCtx.rotate(p.rotation);pCtx.fillStyle=`hsla(${p.hue},60%,75%,${p.alpha})`;pCtx.beginPath();for(let i=0;i<6;i++){const a=(i/6)*Math.PI*2;i===0?pCtx.moveTo(Math.cos(a)*p.size,Math.sin(a)*p.size):pCtx.lineTo(Math.cos(a)*p.size,Math.sin(a)*p.size);}pCtx.closePath();pCtx.fill();pCtx.restore();}else{pCtx.fillStyle=`rgba(220,240,255,${p.alpha})`;pCtx.beginPath();pCtx.arc(p.x,p.y,p.size,0,Math.PI*2);pCtx.fill();}});
+for(let i=mouseFrost.length-1;i>=0;i--){const f=mouseFrost[i];f.life-=f.decay;if(f.life<=0){mouseFrost.splice(i,1);continue;}pCtx.save();pCtx.globalAlpha=f.life*0.6;pCtx.strokeStyle=`hsla(${f.hue},60%,80%,${f.life})`;pCtx.lineWidth=1;pCtx.beginPath();for(let b=0;b<4;b++){const ang=(b/4)*Math.PI*2;pCtx.moveTo(f.x,f.y);pCtx.lineTo(f.x+Math.cos(ang)*f.size,f.y+Math.sin(ang)*f.size);}pCtx.stroke();pCtx.restore();}
+requestAnimationFrame(animateAll);}
+animateAll();
+const sections=document.querySelectorAll('.narrative-section');
+sections.forEach(sec=>{const card=sec.querySelector('.narrative-card');gsap.from(card,{scrollTrigger:{trigger:sec,start:'top 80%',end:'top 30%',scrub:1},y:80,opacity:0,scale:0.96,duration:1,ease:'power2.out'});});
+gsap.from('.hero h1',{y:50,opacity:0,duration:2,ease:'power3.out',delay:0.3});
+gsap.from('.hero .subtitle',{y:20,opacity:0,duration:1.5,ease:'power2.out',delay:0.8});
 </script>
 </body>
 </html>
